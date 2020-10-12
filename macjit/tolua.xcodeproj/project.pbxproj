@@ -209,6 +209,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 0F4B04C71800959F002EA938;
@@ -351,7 +352,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../luajit-2.1/src,
+					"../luajit-2.1/src",
 				);
 				INFOPLIST_FILE = "tolua/tolua-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
@@ -360,7 +361,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = ameng.tolua;
 				PRODUCT_NAME = tolua;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -383,7 +384,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = ameng.tolua;
 				PRODUCT_NAME = tolua;
-				VALID_ARCHS = "x86_64 i386";
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
