@@ -1603,6 +1603,30 @@ static int pbL_prefixname(pb_State *S, pb_Slice s, size_t *ps, pb_Loader *L, pb_
     return PB_OK;
 }
 
+static int pbL_extname(pb_State* S, pb_Slice t, pb_Slice f,  pb_Name** out) {
+    pb_Buffer pbBuffer;
+    pb_initbuffer(&pbBuffer);
+    pbCM(pb_prepbuffsize(&pbBuffer, pb_len(t) + pb_len(f) + 1));
+    if (pb_addslice(&pbBuffer, t) == 0)
+    {
+        pb_resetbuffer(&pbBuffer);
+        return PB_ENOMEM;
+    }
+    if (pb_addslice(&pbBuffer, pb_lslice("_",1)) == 0)
+    {
+        pb_resetbuffer(&pbBuffer);
+        return PB_ENOMEM;
+    }
+    if (pb_addslice(&pbBuffer, f) == 0)
+    {
+        pb_resetbuffer(&pbBuffer);
+        return PB_ENOMEM;
+    }
+    if (out) *out = pb_newname(S, pb_result(&pbBuffer), NULL);
+    pb_resetbuffer(&pbBuffer);
+    return PB_OK;
+}
+
 static int pbL_loadEnum(pb_State *S, pbL_EnumInfo *info, pb_Loader *L) {
     size_t i, count, curr;
     pb_Name *name;
@@ -1619,13 +1643,17 @@ static int pbL_loadEnum(pb_State *S, pbL_EnumInfo *info, pb_Loader *L) {
 }
 
 static int pbL_loadField(pb_State *S, pbL_FieldInfo *info, pb_Loader *L, pb_Type *t) {
+    pb_Name* name;
     pb_Type  *ft = NULL;
     pb_Field *f;
     if (info->type == PB_Tmessage || info->type == PB_Tenum)
         pbCE(ft = pb_newtype(S, pb_newname(S, info->type_name, NULL)));
     if (t == NULL)
         pbCE(t = pb_newtype(S, pb_newname(S, info->extendee, NULL)));
-    pbCE(f = pb_newfield(S, t, pb_newname(S, info->name, NULL), info->number));
+
+    pbC(pbL_extname(S, pb_lslice((char*)t->basename, strlen(t->basename)), info->name, &name));
+
+    pbCE(f = pb_newfield(S, t, name, info->number));
     f->default_value = pb_newname(S, info->default_value, NULL);
     f->type      = ft;
     f->oneof_idx = info->oneof_index;
